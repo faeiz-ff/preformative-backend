@@ -8,7 +8,7 @@ const users = new Hono<{ Bindings: Bindings }>().basePath('/users');
 
 users.get('/', async c => {
     const data = await c.env.DB.prepare(
-        'SELECT * FROM User'
+        'SELECT * FROM users'
     ).all();
     return c.json(data.results);
 });
@@ -16,7 +16,7 @@ users.get('/', async c => {
 users.get('/:name', async c => {
     const searchedName = c.req.param("name");
     const result = await c.env.DB.prepare(
-        'SELECT * FROM User WHERE username = ?'
+        'SELECT * FROM users WHERE username = ?'
     ).bind(searchedName).first();
 
     if (result) {
