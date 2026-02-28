@@ -1,8 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
+import { questionSchema } from "./question-schema";
 
 const pageSchemaBase = z.object({
     description: z.string(),
+    questions: z.optional(z.array(questionSchema))
 })
 
 const pageBranch = z.object({
@@ -24,7 +26,7 @@ const pageSubmit = z.object({
     type: z.literal('submit')
 }).and(pageSchemaBase);
 
-const pageSchema = pageBranch.or(pageBasic).or(pageSubmit);
+export const pageSchema = z.union([pageBranch, pageBasic, pageSubmit]) ;
 
 export type PageSchema = z.infer<typeof pageSchema>;
 

@@ -20,7 +20,7 @@ pages.get('/', async c => {
     const form = c.get('form');
 
     const pages = await getFormPages(form.id);
-    const safePages =  pages.map(p => transformPageSafe(p));
+    const safePages = pages.map(p => transformPageSafe(p));
 
     return c.json(safePages);
 });
@@ -34,7 +34,7 @@ pages.post('/', pageValidator, async c => {
 
     try {
         await insertPage(form.id, page, index);
-        return c.json({ message: `Page inserted into index ${index}`}, 201);
+        return c.json({ message: `Page inserted into index ${index}` }, 201);
     } catch (e) {
         if (e instanceof Error) {
             console.log(e.message);
@@ -58,7 +58,7 @@ pages.get('/:pageIndex', async c => {
 
 pages.use('/:pageIndex/*', async (c, next) => {
     const form = c.get('form');
-    
+
     const pageIndex = Number(c.req.param('pageIndex'));
     const page = await getFormPage(form.id, pageIndex);
 

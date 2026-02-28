@@ -27,7 +27,7 @@ const questionSingleChoice = z.object({
     choices: z.array(z.string()),
 }).and(questionSchemaBase);
 
-const questionSchema = questionText.or(questionTextArea).or(questionCheckBox).or(questionSingleChoice);
+export const questionSchema = z.union([questionText, questionTextArea, questionCheckBox, questionSingleChoice]);
 
 export type QuestionSchema = z.infer<typeof questionSchema>;
 

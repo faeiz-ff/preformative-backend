@@ -33,7 +33,7 @@ questions.post('/', questionValidator, async c => {
 
     try {
         await insertQuestion(page.id, question, index);
-        return c.json({ message: `Question inserted into index ${index}`}, 201);
+        return c.json({ message: `Question inserted into index ${index}` }, 201);
     } catch (e) {
         if (e instanceof Error) {
             console.log(e.message);
@@ -44,7 +44,7 @@ questions.post('/', questionValidator, async c => {
 
 questions.get('/:questionIndex', async (c) => {
     const page = c.get('page');
-    
+
     const questionIndex = Number(c.req.param('questionIndex'));
     const question = await getPageQuestion(page.id, questionIndex);
 

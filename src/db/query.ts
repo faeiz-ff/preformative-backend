@@ -10,22 +10,84 @@ export const insertUser = async (username: string, password: string) => {
     return result.results[0].id;
 };
 
-export const insertForm = async (userID: number, form: FormSchema) => {
-    const uuid = crypto.randomUUID();
-    await env.DB.prepare(
+export const insertForm = async (userID: number, form: FormSchema, uuid?:string) => {
+    if (!uuid) uuid = crypto.randomUUID();
+
+    const result = await env.DB.prepare(
         `INSERT INTO forms (title, description, user_id, public_id) VALUES
-            (?, ?, ?, ?);`
-    ).bind(form.title, form.description, userID, uuid).run();
+            (?, ?, ?, ?)
+         RETURNING id;`
+    ).bind(form.title, form.description, userID, uuid).run<DBForm>();
+
+    const id = result.results[0].id;
+
+    if (form.pages) {
+        form.pages.forEach((page, index) => insertPage(id, page, index + 1));
+    }
 
     return uuid;
 };
 
+export const updateFormInfo = async (formID: number, form: FormSchema) => {
+    await env.DB.prepare(
+        `UPDATE forms SET title = ?, description = ? WHERE id = ? ;`
+    ).bind(form.title, form.description, formID).run();
+};
+
+export const setFormIsPublic = async (formID: number, flag: boolean) => {
+    await env.DB.prepare(
+        `UPDATE forms SET is_public = ? WHERE id = ?;`
+    ).bind(flag, formID).run();
+}
+
+export const deleteForm = async (formID: number) => {
+    await env.DB.prepare(
+        `DELETE FROM forms WHERE id = ?;`
+    ).bind(formID).run();
+}
+
+export const insertPage = async (formID: number, page: PageSchema, index: number) => {
+    let config: any = {};
+    switch (page.type) {
+        case "branch": config = { condition: page.condition }; break;
+        case "basic": config = { next: page.next }; break;
+        case "submit": break;
+    }
+
+    const result = await env.DB.prepare(
+        `INSERT INTO pages (description, type, form_id, page_index, config) VALUES
+            (?, ?, ?, ?, ?)
+         RETURNING id;`
+    ).bind(page.description, page.type, formID, index, JSON.stringify(config))
+        .run<DBPage>();
+
+    const id = result.results[0].id;
+
+    if (page.questions) {
+        page.questions.forEach((question, index) => insertQuestion(id, question, index));
+    }
+};
+
+export const updatePageInfo = async (pageID: number, page: PageSchema) => {
+    let config: any = {};
+    switch (page.type) {
+        case "branch": config = { condition: page.condition }; break;
+        case "basic": config = { next: page.next }; break;
+        case "submit": break;
+    }
+
+    await env.DB.prepare(
+        `UPDATE pages SET description = ?, type = ?, config = ? WHERE id = ? ;`
+    ).bind(page.description, page.type, JSON.stringify(config), pageID)
+        .run();
+}
+
 export const insertQuestion = async (pageID: number, question: QuestionSchema, index: number) => {
-    let config : any = {};
+    let config: any = {};
     switch (question.type) {
         case "text": config = { isNumberOnly: question.isNumberOnly }; break;
         case "textarea": break;
-        case "checkbox": config = { choices: question.choices, minimumOf: question.minimumOf }; break;  
+        case "checkbox": config = { choices: question.choices, minimumOf: question.minimumOf }; break;
         case "singlechoice": config = { choices: question.choices }; break;
     }
 
@@ -33,23 +95,23 @@ export const insertQuestion = async (pageID: number, question: QuestionSchema, i
         `INSERT INTO questions (prompt, name, page_id, is_required, type, config, question_index) VALUES
             (?, ?, ?, ?, ?, ?, ?);`
     ).bind(question.prompt, question.name, pageID, question.isRequired, question.type, JSON.stringify(config), index)
-    .run();
+        .run();
 };
 
-export const insertPage = async (formID: number, page: PageSchema, index: number) => {
-    let config : any = {};
-    switch (page.type) {
-        case "branch": config = { condition: page.condition }; break;
-        case "basic": config = { next:page.next }; break;
-        case "submit": break;
+export const updateFullQuestion = async (questionID: number, question: QuestionSchema) => {
+    let config: any = {};
+    switch (question.type) {
+        case "text": config = { isNumberOnly: question.isNumberOnly }; break;
+        case "textarea": break;
+        case "checkbox": config = { choices: question.choices, minimumOf: question.minimumOf }; break;
+        case "singlechoice": config = { choices: question.choices }; break;
     }
 
     await env.DB.prepare(
-        `INSERT INTO pages (description, type, form_id, page_index, config) VALUES
-            (?, ?, ?, ?, ?);`
-    ).bind(page.description, page.type, formID, index, JSON.stringify(config))
-    .run();
-}
+        `UPDATE questions SET prompt = ?, name = ?, is_required = ?, type = ?, config = ? WHERE id = ? ;`
+    ).bind(question.prompt, question.name, question.isRequired, question.type, JSON.stringify(config), questionID)
+        .run();
+};
 
 export const getUserFromName = async (username: string) => {
     const query = `SELECT * FROM users WHERE username = ?`;

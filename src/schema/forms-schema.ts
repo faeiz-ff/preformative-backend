@@ -1,9 +1,12 @@
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
+import { pageSchema } from "./page-schema";
 
 const formSchema = z.object({
     title: z.string("Form title expected"),
     description: z.string("Form description expected"),
+    isPublic: z.optional(z.boolean()),
+    pages: z.optional(z.array(pageSchema))
 });
 
 export type FormSchema = z.infer<typeof formSchema>;

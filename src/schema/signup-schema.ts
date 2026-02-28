@@ -4,7 +4,7 @@ import z from 'zod'
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 const alphanumericString = z.string().regex(alphanumericRegex, {
-  message: "Username must contain only letters and numbers",
+    message: "Username must contain only letters and numbers",
 });
 
 const signupSchema = z.object({

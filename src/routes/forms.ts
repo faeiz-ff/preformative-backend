@@ -29,7 +29,7 @@ forms.get(':uuid', async c => {
 
     const fullForm = transformFormFull(form);
     fullForm.pages = fullPages;
-    
+
     return c.json(fullForm);
 });
 
