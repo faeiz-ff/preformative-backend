@@ -1,6 +1,8 @@
 import { env } from "cloudflare:workers";
 import { DBForm, DBPage, DBQuestion, DBUser } from "types/db";
 import { FormSchema } from "schema/forms-schema";
+import { QuestionSchema } from "schema/question-schema";
+import { PageSchema } from "schema/page-schema";
 
 export const insertUser = async (username: string, password: string) => {
     const query = `INSERT INTO users (username, password) VALUES ( ?, ? ) RETURNING id;`;
@@ -16,6 +18,37 @@ export const insertForm = async (userID: number, form: FormSchema) => {
     ).bind(form.title, form.description, userID, uuid).run();
 
     return uuid;
+};
+
+export const insertQuestion = async (pageID: number, question: QuestionSchema, index: number) => {
+    let config : any = {};
+    switch (question.type) {
+        case "text": config = { isNumberOnly: question.isNumberOnly }; break;
+        case "textarea": break;
+        case "checkbox": config = { choices: question.choices, minimumOf: question.minimumOf }; break;  
+        case "singlechoice": config = { choices: question.choices }; break;
+    }
+
+    await env.DB.prepare(
+        `INSERT INTO questions (prompt, name, page_id, is_required, type, config, question_index) VALUES
+            (?, ?, ?, ?, ?, ?, ?);`
+    ).bind(question.prompt, question.name, pageID, question.isRequired, question.type, JSON.stringify(config), index)
+    .run();
+};
+
+export const insertPage = async (formID: number, page: PageSchema, index: number) => {
+    let config : any = {};
+    switch (page.type) {
+        case "branch": config = { condition: page.condition }; break;
+        case "basic": config = { next:page.next }; break;
+        case "submit": break;
+    }
+
+    await env.DB.prepare(
+        `INSERT INTO pages (description, type, form_id, page_index, config) VALUES
+            (?, ?, ?, ?, ?);`
+    ).bind(page.description, page.type, formID, index, JSON.stringify(config))
+    .run();
 }
 
 export const getUserFromName = async (username: string) => {

@@ -1,4 +1,4 @@
-import { Form, FormSafe, Page, PageSafe, Question, QuestionSafe } from "../types/api";
+import { Form, FormInfo, Page, PageInfo, Question } from "../types/api";
 import { DBForm, DBPage, DBQuestion } from "../types/db"
 
 export const transformFormSafe = (f: DBForm) => {
@@ -8,47 +8,89 @@ export const transformFormSafe = (f: DBForm) => {
         isPublic: f.is_public,
         publicID: f.public_id,
         createdAt: f.created_at,
-    } as FormSafe;
+    } as FormInfo;
 };
 
-export const transformPageSafe = (p: DBPage) => {
-    return {
-        description: p.description,
-        type: p.type,
-        pageIndex: p.page_index,
-    } as PageSafe;
+export const transformPageSafe : (q:DBPage) => PageInfo = (p: DBPage) => {
+    const config : any = JSON.parse(p.config);
+    switch (p.type) {
+        case 'branch': 
+            return {
+                type: 'branch',
+                description: p.description,
+                condition: config.condition,
+            }
+        case 'basic':
+            return {
+                type: 'basic',
+                description: p.description,
+                next: config.next
+            }
+        case 'submit':
+            return {
+                type: 'submit',
+                description: p.description,
+            }
+        default:
+            throw new Error('bad page type');
+    }
 };
 
-export const transformQuestionSafe = (q: DBQuestion) => {
-    return {
-        prompt: q.prompt,
-        type: q.type,
-        config: q.config,
-        questionIndex: q.question_index
-    } as QuestionSafe;
+export const transformQuestion : (q:DBQuestion) => Question = (q: DBQuestion) => {
+    const config : any = JSON.parse(q.config);
+    switch (q.type) {
+        case 'text':
+            return {
+                type: 'text',
+                prompt: q.prompt,
+                name: q.name,
+                isRequired: q.is_required === 1 ? true : false,
+                isNumberOnly: config.isNumberOnly
+            } 
+        case 'textarea':
+            return {
+                type: 'textarea',
+                prompt: q.prompt,
+                isRequired: q.is_required === 1 ? true : false,
+                name: q.name
+            }
+        case 'checkbox':
+            return {
+                type: 'checkbox',
+                prompt: q.prompt,
+                isRequired: q.is_required === 1 ? true : false,
+                name: q.name,
+                choices: config.choices,
+                minimumOf: config.minimumOf
+            }
+        case 'singlechoice': 
+            return {
+                type: 'singlechoice',
+                prompt: q.prompt,
+                isRequired: q.is_required === 1 ? true : false,
+                name: q.name,
+                choices: config.choices,
+            }
+        default:
+            throw new Error('bad question type');
+    }
 };
 
 export const transformFormFull = (f: DBForm) => {
     return {
-        id: f.id,
-        userID: f.user_id,
         ...transformFormSafe(f),
+        pages: []
     } as Form;
 };
 
 export const transformPageFull = (p: DBPage) => {
     return {
-        id: p.id,
-        formID: p.form_id,
         ...transformPageSafe(p),
+        questions: []
     } as Page;
-};
+}
 
-export const transformQuestionFull = (q: DBQuestion) => {
-    return {
-        id: q.id,
-        pageID: q.page_id,
-        ...transformQuestionSafe(q),
-    } as Question;
-};
+
+
+
 

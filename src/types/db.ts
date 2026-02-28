@@ -19,6 +19,7 @@ export type DBPage = {
     id: number;
     description: string;
     type: string;
+    config: string;
     page_index: number;
     form_id: number;
 };
@@ -26,6 +27,8 @@ export type DBPage = {
 export type DBQuestion = {
     id: number;
     prompt: string;
+    name: string;
+    is_required: number;
     page_id: number;
     type: string;
     config: string;

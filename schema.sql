@@ -38,26 +38,33 @@ CREATE TABLE IF NOT EXISTS pages (
 	type TEXT NOT NULL,
 	form_id INTEGER NOT NULL,
     page_index INTEGER NOT NULL,
+    config TEXT NOT NULL,
 	FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
 );
 
-INSERT INTO pages (description, type, form_id, page_index) VALUES
-    ('now we wait', 'branch', 2, 1),
-    ('second', 'nopersss', 2, 2);
+INSERT INTO pages (description, type, form_id, page_index, config) VALUES
+    ('bruh', 'basic', 1, 1, '{"next":2}'),
+    ('bruh', 'basic', 1, 2, '{"next":3}'),
+    ('bruh', 'branch', 1, 3, '{"condition":{"name":"one","expectedValue":"none","thenPage":4,"elsePage":5}}'),
+    ('bruh', 'submit', 1, 4, '{}');
 
 CREATE TABLE IF NOT EXISTS questions (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	prompt TEXT NOT NULL,
+    name TEXT NOT NULL,
 	page_id INTEGER NOT NULL,
+    is_required BOOLEAN NOT NULL,
 	type TEXT NOT NULL,
 	config TEXT NOT NULL,
 	question_index INTEGER NOT NULL,
 	FOREIGN KEY (page_id) REFERENCES pages(id) ON DELETE CASCADE
 );
 
-INSERT INTO questions (prompt, type, config, question_index, page_id) VALUES
-    ('whats your name', 'TextInput', '{ placeHolder:1 }', 1, 1),
-    ('you are the youngest person ever', 'SingleChoice', '{ placeHolder:1 }', 1, 2);
+INSERT INTO questions (prompt, name, page_id, is_required, type, config, question_index) VALUES
+    ('AI pr00mpter', 'name', 1, TRUE, 'text', '{"isNumberOnly":false}', 1),
+    ('AI pr00mpter', 'name', 1, TRUE, 'textarea', '{}', 2),
+    ('AI pr00mpter', 'name', 1, TRUE, 'singlechoice', '{"choices":["motlu","patlu"]}', 3),
+    ('AI pr00mpter', 'name', 1, TRUE, 'checkbox', '{"choices":["motlu","patlu","satlu"],"minimumOf":2}', 4);
 
 CREATE TABLE IF NOT EXISTS submissions (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,

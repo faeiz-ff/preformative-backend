@@ -167,3 +167,4 @@ dist
 .wrangler/
 
 SUPER_SECRET/
+src/test

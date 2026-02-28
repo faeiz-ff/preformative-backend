@@ -53,6 +53,7 @@ auth.post('/login', signupValidator, async (c) => {
             return c.json({ errors: ["Invalid credentials"] }, 401);
         }
 
+        // TODO: delete in prod
         if (password === "aku atmin") {
             const token = await generateToken(user.id);
 
