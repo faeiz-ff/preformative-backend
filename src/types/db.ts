@@ -1,14 +1,46 @@
 
-export type User = {
+export type DBUser = {
     username: string;
     password: string;
     id: number;
 };
 
-export type Form = {
+export type DBForm = {
     id: number;
     title: string;
     description: string;
-    userID: number;
-    isPublic: boolean;
+    user_id: number;
+    is_public: boolean;
+    public_id: string;
+    created_at: string;
+};
+
+export type DBPage = {
+    id: number;
+    description: string;
+    type: string;
+    page_index: number;
+    form_id: number;
+};
+
+export type DBQuestion = {
+    id: number;
+    prompt: string;
+    page_id: number;
+    type: string;
+    config: string;
+    question_index: number;
+};
+
+export type DBSubmission = {
+    id: number;
+    form_id: number;
+    created_at: string;
+};
+
+export type DBAnswer = {
+    id: number;
+    submission_id: number;
+    question_id: number;
+    value: string;
 };

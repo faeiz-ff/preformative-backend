@@ -1,8 +1,14 @@
 import { zValidator } from '@hono/zod-validator'
 import z from 'zod'
 
+const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+
+const alphanumericString = z.string().regex(alphanumericRegex, {
+  message: "username must contain only letters and numbers",
+});
+
 const signupSchema = z.object({
-    username: z.string(),
+    username: alphanumericString,
     password: z
         .string()
         .min(8, { message: 'Password must be atleast 8 characters long' })

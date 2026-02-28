@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS forms (
 	user_id INTEGER NOT NULL,
 	is_public INTEGER NOT NULL DEFAULT 0,
 	public_id TEXT NOT NULL UNIQUE,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -29,15 +30,20 @@ CREATE UNIQUE INDEX idx_forms_public_id ON forms(public_id);
 
 INSERT INTO forms (title, description, user_id, public_id) VALUES
     ('interview', 'no thanks', 1, 'uuid something something'),
-    ('whatttt', 'noperinosss', 1, 'uuid something something');
+    ('whatttt', 'noperinosss', 1, 'asdbf-123123-asdfasdf');
 
 CREATE TABLE IF NOT EXISTS pages (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	description TEXT NOT NULL,
 	type TEXT NOT NULL,
 	form_id INTEGER NOT NULL,
+    page_index INTEGER NOT NULL,
 	FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
 );
+
+INSERT INTO pages (description, type, form_id, page_index) VALUES
+    ('now we wait', 'branch', 2, 1),
+    ('second', 'nopersss', 2, 2);
 
 CREATE TABLE IF NOT EXISTS questions (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,6 +54,10 @@ CREATE TABLE IF NOT EXISTS questions (
 	question_index INTEGER NOT NULL,
 	FOREIGN KEY (page_id) REFERENCES pages(id) ON DELETE CASCADE
 );
+
+INSERT INTO questions (prompt, type, config, question_index, page_id) VALUES
+    ('whats your name', 'TextInput', '{ placeHolder:1 }', 1, 1),
+    ('you are the youngest person ever', 'SingleChoice', '{ placeHolder:1 }', 1, 2);
 
 CREATE TABLE IF NOT EXISTS submissions (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
