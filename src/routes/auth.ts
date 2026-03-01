@@ -53,7 +53,6 @@ auth.post('/login', signupValidator, async (c) => {
             return c.json({ errors: ["Invalid credentials"] }, 401);
         }
 
-        // TODO: delete in prod
         // if (password === "aku atmin") {
         //     const token = await generateToken(user.id);
         //
@@ -61,10 +60,10 @@ auth.post('/login', signupValidator, async (c) => {
         //
         //     return c.json({
         //         message: "Logged in sucessfully",
-        //         user: { id: user.id, username }
+        //         user: { username }
         //     });
         // }
-
+        //
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             return c.json({ errors: ["Invalid credentials"] }, 401);
@@ -74,7 +73,7 @@ auth.post('/login', signupValidator, async (c) => {
         setCookie(c, 'authToken', token, cookieOpts);
         return c.json({
             message: "Logged in sucessfully",
-            user: { id: user.id, username }
+            user: { username }
         });
     } catch (error) {
         if (error instanceof Error) {

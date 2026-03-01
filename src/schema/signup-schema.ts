@@ -14,9 +14,10 @@ const signupSchema = z.object({
         .min(8, { message: 'Password must be atleast 8 characters long' })
 });
 
-const signupValidator = zValidator('json', signupSchema, (result, c) => {
+const signupValidator = zValidator('json', signupSchema, async (result, c) => {
     if (!result.success) {
         return c.json({
+            whatYouSent: result.data,
             errors: result.error.issues.map(issue => issue.message)
         }, 400);
     }
