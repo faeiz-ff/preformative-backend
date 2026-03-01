@@ -1,8 +1,9 @@
 import { env } from "cloudflare:workers";
-import { DBForm, DBPage, DBQuestion, DBUser } from "types/db";
+import { DBForm, DBPage, DBQuestion, DBSubmission, DBUser } from "types/db";
 import { FormSchema } from "schema/forms-schema";
 import { QuestionSchema } from "schema/question-schema";
 import { PageSchema } from "schema/page-schema";
+import { SubmissionSchema } from "schema/submission-schema";
 
 export const insertUser = async (username: string, password: string) => {
     const query = `INSERT INTO users (username, password) VALUES ( ?, ? ) RETURNING id;`;
@@ -113,8 +114,19 @@ export const updateFullQuestion = async (questionID: number, question: QuestionS
         .run();
 };
 
+export const getFormSubmissions = async (formID: number) => {
+    const query = `SELECT * FROM submissions WHERE form_id = ?;`
+    const result = await env.DB.prepare(query).bind(formID).all<DBSubmission>();
+    return result.results;
+}
+
+export const makeSubmission = async (formID: number, submission: SubmissionSchema) => {
+    const query = `INSERT INTO submissions (form_id, answers) VALUES (?, ?);`;
+    await env.DB.prepare(query).bind(formID, JSON.stringify(submission.answers)).run();
+}
+
 export const getUserFromName = async (username: string) => {
-    const query = `SELECT * FROM users WHERE username = ?`;
+    const query = `SELECT * FROM users WHERE username = ?;`;
     return await env.DB.prepare(query).bind(username).first<DBUser>();
 };
 

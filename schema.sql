@@ -69,15 +69,7 @@ INSERT INTO questions (prompt, name, page_id, is_required, type, config, questio
 CREATE TABLE IF NOT EXISTS submissions (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	form_id INTEGER NOT NULL,
+    answers TEXT NOT NULL,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS answers (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	submission_id INTEGER NOT NULL,
-	question_id INTEGER NOT NULL,
-	value TEXT NOT NULL,
-	FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE,
-	FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );

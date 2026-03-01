@@ -20,7 +20,7 @@ pages.get('/', async c => {
     const form = c.get('form');
 
     const pages = await getFormPages(form.id);
-    const safePages = pages.map(p => transformPageSafe(p));
+    const safePages = pages.map(transformPageSafe);
 
     return c.json(safePages);
 });

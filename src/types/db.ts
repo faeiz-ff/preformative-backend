@@ -38,12 +38,7 @@ export type DBQuestion = {
 export type DBSubmission = {
     id: number;
     form_id: number;
+    answers: string;
     created_at: string;
 };
 
-export type DBAnswer = {
-    id: number;
-    submission_id: number;
-    question_id: number;
-    value: string;
-};

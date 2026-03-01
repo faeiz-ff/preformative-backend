@@ -1,5 +1,5 @@
-import { Form, FormInfo, Page, PageInfo, Question } from "../types/api";
-import { DBForm, DBPage, DBQuestion } from "../types/db"
+import { Answer, Form, FormInfo, Page, PageInfo, Question, Submission } from "../types/api";
+import { DBForm, DBPage, DBQuestion, DBSubmission } from "../types/db"
 
 export const transformFormSafe = (f: DBForm) => {
     return {
@@ -88,6 +88,14 @@ export const transformPageFull = (p: DBPage) => {
         ...transformPageSafe(p),
         questions: []
     } as Page;
+}
+
+export const transformSubmission = (s: DBSubmission) => {
+    const answers = JSON.parse(s.answers) as Answer[];
+    return {
+        createdAt: s.created_at,
+        answers
+    } as Submission;
 }
 
 

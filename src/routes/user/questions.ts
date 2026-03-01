@@ -19,7 +19,7 @@ questions.get('/', async c => {
     const page = c.get('page')
 
     const questions = await getPageQuestions(page.id);
-    const safeQuestions = questions.map(q => transformQuestion(q));
+    const safeQuestions = questions.map(transformQuestion);
 
     return c.json(safeQuestions);
 });

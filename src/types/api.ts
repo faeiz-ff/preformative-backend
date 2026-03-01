@@ -1,6 +1,7 @@
 import { FormSchema } from "schema/forms-schema";
 import { PageSchema } from "schema/page-schema";
 import { QuestionSchema } from "schema/question-schema";
+import { AnswerSchema } from "schema/submission-schema";
 
 export type User = {
     username: string;
@@ -23,9 +24,8 @@ export type Question = QuestionSchema;
 export type Submission = {
     createdAt: string;
     answers: Answer[];
-};
+}
 
-export type Answer = {
-    value: string;
-};
+export type Answer = AnswerSchema;
+
 

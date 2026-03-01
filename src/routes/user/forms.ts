@@ -6,6 +6,7 @@ import pagesRoute from "./pages";
 import formsValidator from "schema/forms-schema";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
+import submissionsRoute from "./submissions";
 
 type Bindings = {
     DB: D1Database;
@@ -20,7 +21,7 @@ const forms = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 forms.get('/', async c => {
     const { sub: userID } = c.get('jwtPayload');
     const userForms = await getUserForms(userID);
-    return c.json(userForms.map(f => transformFormSafe(f)));
+    return c.json(userForms.map(transformFormSafe));
 });
 
 forms.post('/', formsValidator, async c => {
@@ -118,5 +119,6 @@ forms.post('/:uuid/publish',
 });
 
 forms.route('/:uuid/pages', pagesRoute);
+forms.route('/:uuid/submissions', submissionsRoute);
 
 export default forms;
