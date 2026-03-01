@@ -17,10 +17,19 @@ Backend ini sangat terintegrasi dengan environment cloudflare, untuk mengembangk
 ```
 npx wrangler d1 create <DB_NAME>
 ```
+- Namakan bindings dengan DB agar kode dapat mereferensikannya
 - Copy-paste bindings menuju `wrangler.jsonc`, ganti bindings database saya yang saya lupa tutupi
 - Lalu inisialisasi database dengan command ini
 ```
 npx wrangler d1 execute <DB-NAME> --file=./schema.sql
 ```
+- Buat file `.dev.vars` lalu isikan dengan JWT_AUTH_SECRET
+```
+JWT_AUTH_SECRET=isikankarakterapasajadisiniasalkansusahditebak
+```
+- jalankan command ini untuk menggenerasikan deklarasi types yang sesuai
+```
+npm run cf-typegen
+```
 
-Jalankan `npm run dev` dan server localhost akan berjalan
+Jalankan `npm run dev` dan server localhost akan berjalan, hore
