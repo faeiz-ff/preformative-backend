@@ -2,11 +2,18 @@ import { Hono } from "hono";
 import formsRoute from "./routes/forms";
 import userRoute from "./routes/user/index";
 import authRoute from "./routes/auth";
+import { cors } from "hono/cors";
 
 // // TODO: Delete this in prod
 // import debugRoute from "./routes/debug";
 
 const app = new Hono();
+
+app.use("*", cors({
+    origin: "http://localhost:5173",
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
 
 // app.route('/debug', debugRoute);
 app.route('/forms', formsRoute);
