@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS submissions;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS pages;

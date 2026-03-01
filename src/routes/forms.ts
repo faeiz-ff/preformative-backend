@@ -1,6 +1,6 @@
 import { getForm, getFormPages, getPageQuestions, makeSubmission } from "db/query";
 import { Hono } from "hono";
-import { AnswerSchema, submissionValidator } from "schema/submission-schema";
+import { submissionValidator } from "schema/submission-schema";
 import { DBForm } from "types/db";
 import { transformFormFull, transformPageFull, transformQuestion } from "utils/conversions";
 

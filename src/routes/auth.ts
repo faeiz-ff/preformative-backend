@@ -54,16 +54,16 @@ auth.post('/login', signupValidator, async (c) => {
         }
 
         // TODO: delete in prod
-        if (password === "aku atmin") {
-            const token = await generateToken(user.id);
-
-            setCookie(c, 'authToken', token, cookieOpts);
-
-            return c.json({
-                message: "Logged in sucessfully",
-                user: { id: user.id, username }
-            });
-        }
+        // if (password === "aku atmin") {
+        //     const token = await generateToken(user.id);
+        //
+        //     setCookie(c, 'authToken', token, cookieOpts);
+        //
+        //     return c.json({
+        //         message: "Logged in sucessfully",
+        //         user: { id: user.id, username }
+        //     });
+        // }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
